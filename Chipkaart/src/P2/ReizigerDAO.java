@@ -1,5 +1,7 @@
 package P2;
 
+import org.postgresql.util.PSQLException;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -8,7 +10,7 @@ public interface ReizigerDAO {
 
     public boolean update(Reiziger reiziger) throws SQLException;
 
-    public boolean delete(Reiziger reiziger) throws SQLException;
+    public boolean delete(Reiziger reiziger) throws SQLException, PSQLException;
 
     public Reiziger findById(int id) throws SQLException;
 

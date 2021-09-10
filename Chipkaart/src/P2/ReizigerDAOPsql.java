@@ -33,13 +33,13 @@ public class ReizigerDAOPsql implements ReizigerDAO{
         Statement myStat = conn.createStatement();
         int id = reiziger.getId();
         String voorletters = reiziger.getVoorletters();
-        String tussenvoegsel = null;
+        String tussenvoegsel = " ";
         if(reiziger.getTussenvoegsel() != null) {
             tussenvoegsel = reiziger.getTussenvoegsel();
         }
         String achternaam = reiziger.getAchternaam();
         java.util.Date geboortedatum = reiziger.getGeboortedatum();
-        int r = myStat.executeUpdate("update reiziger set reiziger("+id +",' "+voorletters+"',' "+tussenvoegsel+"',' "+achternaam+"','"+geboortedatum+"'); where reiziger_id = id");
+        int r = myStat.executeUpdate("update reiziger set reiziger_id = ("+id +"), voorletters = ('"+voorletters+"') , tussenvoegsel = ('"+tussenvoegsel+"') , achternaam = ('"+achternaam+"') , geboortedatum = ('"+geboortedatum+"') where reiziger_id = ("+id+")");
         return true;
     }
 
@@ -47,22 +47,48 @@ public class ReizigerDAOPsql implements ReizigerDAO{
     public boolean delete(Reiziger reiziger) throws SQLException {
         int id = reiziger.getId();
         Statement myStat = conn.createStatement();
-        ResultSet r = myStat.executeQuery("delete from reiziger where reiziger_id = id ");
+        int r = myStat.executeUpdate("delete from reiziger where reiziger_id = ("+id+") ");
         return true;
     }
 
     @Override
     public Reiziger findById(int id) throws SQLException {
         Statement myStat = conn.createStatement();
-        ResultSet reiziger = myStat.executeQuery("select * from reiziger where reiziger_id = id");
-        return (Reiziger) reiziger;
+        ResultSet reiziger = myStat.executeQuery("select * from reiziger where reiziger_id = ("+id+")");
+        ArrayList<Reiziger> lijst = new ArrayList<>();
+        while (reiziger.next()) {
+            int reizigerid = reiziger.getInt("reiziger_id");
+            String voorletters = reiziger.getString("voorletters");
+            String tussenvoegsel = null;
+            if(reiziger.getString("tussenvoegsel") != null) {
+                tussenvoegsel = reiziger.getString("tussenvoegsel");
+            }
+            String achternaam = reiziger.getString("achternaam");
+            Date geboortedatum = reiziger.getDate("geboortedatum");
+            Reiziger r1 = new Reiziger(reizigerid,voorletters,tussenvoegsel, achternaam, geboortedatum);
+            lijst.add(r1);
+        }
+        return lijst.get(0);
     }
 
     @Override
     public List<Reiziger> findByGbdatum(String datum) throws SQLException {
         Statement myStat = conn.createStatement();
-        ResultSet reiziger = myStat.executeQuery("select * from reiziger where geboortedatum = datum");
-        return (List<Reiziger>) reiziger;
+        ResultSet reiziger = myStat.executeQuery("select * from reiziger where geboortedatum = ('"+datum+"')");
+        ArrayList<Reiziger> lijst = new ArrayList<>();
+        while (reiziger.next()) {
+            int reizigerid = reiziger.getInt("reiziger_id");
+            String voorletters = reiziger.getString("voorletters");
+            String tussenvoegsel = null;
+            if(reiziger.getString("tussenvoegsel") != null) {
+                tussenvoegsel = reiziger.getString("tussenvoegsel");
+            }
+            String achternaam = reiziger.getString("achternaam");
+            Date geboortedatum = reiziger.getDate("geboortedatum");
+            Reiziger r1 = new Reiziger(reizigerid,voorletters,tussenvoegsel, achternaam, geboortedatum);
+            lijst.add(r1);
+        }
+        return lijst;
     }
 
     @Override
@@ -79,7 +105,6 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             }
             String achternaam = reiziger.getString("achternaam");
             Date geboortedatum = reiziger.getDate("geboortedatum");
-            ArrayList<Reiziger> rei = new ArrayList<>();
             Reiziger r1 = new Reiziger(reizigerid,voorletters,tussenvoegsel, achternaam, geboortedatum);
             lijst.add(r1);
         }

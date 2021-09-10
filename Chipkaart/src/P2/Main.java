@@ -1,5 +1,7 @@
 package P2;
 
+import org.postgresql.util.PSQLException;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -11,13 +13,8 @@ public class Main {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost/ovchip", "postgres", "Kaas");
         ReizigerDAO rdao = new ReizigerDAOPsql(conn);
-        /**
-         * P2. Reiziger DAO: persistentie van een klasse
-         *
-         * Deze methode test de CRUD-functionaliteit van de Reiziger DAO
-         *
-         * @throws SQLException
-         */
+        AdresDAO adao = new AdresDAOPsql(conn);
+
             System.out.println("\n---------- Test ReizigerDAO -------------");
 
             // Haal alle reizigers op uit de database
@@ -28,35 +25,62 @@ public class Main {
             }
             System.out.println();
 
+            String gbdatum = "1981-03-14";
+            Reiziger sietske = new Reiziger(81, "S", "", "Boers", Date.valueOf(gbdatum));
+
+            //  delete reiziger
+            Reiziger de = new Reiziger(14, "S", "", "Boers", Date.valueOf("1981-03-14"));
+            rdao.delete(de);
+            rdao.delete(sietske);
+
             // Maak een nieuwe reiziger aan en persisteer deze in de database
-//            String gbdatum = "1981-03-14";
-//            Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(gbdatum));
-//            System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-//            rdao.save(sietske);
-//            reizigers = rdao.findAll();
-//            System.out.println(reizigers.size() + " reizigers\n");
+            System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
+            rdao.save(sietske);
+            reizigers = rdao.findAll();
+            System.out.println(reizigers.size() + " reizigers\n");
 
-            // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
             // Verander reiziger
-//        String gbdatum = "1981-03-14";
-//        Reiziger aap = new Reiziger(77, "A", "", "Boers", Date.valueOf(gbdatum));
-//        rdao.update(aap);
-//        for (Reiziger r : reizigers) {
-//            System.out.println(r);
-//        }
+             Reiziger aap = new Reiziger(81, "Z", "", "Boers", Date.valueOf("1981-03-14"));
+             rdao.update(aap);
 
-//            delete reiziger
-//            String gbdatum = "1981-03-14";
-//            Reiziger de = new Reiziger(2, "S", "", "Boers", Date.valueOf(gbdatum));
-//            rdao.delete(de);
-//            System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
 
-//            rdao.findById(2);
+            //Vind reiziger met id
+            System.out.println("\n[Test] Vind reiziger met ID");
+            System.out.println(rdao.findById(2));
 
-            rdao.findByGbdatum("1981-03-14");
 
-//        conn.close;
+            //Vind reiziger doormiddel van geboortedatum
+            System.out.println("\n[Test] Vind reiziger doormiddel van geboortedatum");
+            System.out.println(rdao.findByGbdatum("1981-03-14"));
+
+        System.out.println("\n---------- Test AdresDAO -------------");
+
+//         Maak een nieuw adres aan en persisteer deze in de database
+            Reiziger kees = new Reiziger(14, "S", "", "Boers", Date.valueOf("1981-03-14"));
+            rdao.save(kees);
+            Adres Utrecht = new Adres(8, "4444 AK","22", "Havenlaan", "Utrecht", 14);
+            adao.save(Utrecht);
+
+        // Verander adres
+             Adres ad1 = new Adres(8, "4444 AK","22", "Havenstraat", "Utrecht", 14);
+             adao.update(ad1);
+
+//        delete adres
+            adao.delete(Utrecht);
+
+        //Vind adres bij id
+            System.out.println("\n[Test] Vind adres met ID");
+            System.out.println(adao.findById(1));
+
+        //Vind adres doormiddel van reiziger
+        System.out.println("\n[Test] Vind adres doormiddel van reiziger");
+        Reiziger re = new Reiziger(1, "S", "", "Boers", Date.valueOf("1981-03-14"));
+        System.out.println(adao.findByReiziger(re));
+
+        //Vind alle adressen
+        System.out.println("\n[Test] Vind alle adressen");
+        System.out.println(adao.findAll());
 
     }
-    
+
 }
