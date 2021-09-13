@@ -1,4 +1,4 @@
-package P2;
+package Persistentie.P2;
 
 import java.sql.*;
 import java.util.ArrayList;

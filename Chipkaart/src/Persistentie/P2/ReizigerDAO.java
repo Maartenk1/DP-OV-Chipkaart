@@ -1,4 +1,4 @@
-package P2;
+package Persistentie.P2;
 
 import org.postgresql.util.PSQLException;
 

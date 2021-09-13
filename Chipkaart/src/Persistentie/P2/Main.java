@@ -1,6 +1,4 @@
-package P2;
-
-import org.postgresql.util.PSQLException;
+package Persistentie.P2;
 
 import java.sql.Connection;
 import java.sql.Date;

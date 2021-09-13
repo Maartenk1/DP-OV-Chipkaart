@@ -1,7 +1,5 @@
-package P1;
+package Persistentie.P1;
 
-import java.sql.*;
-import java.util.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
