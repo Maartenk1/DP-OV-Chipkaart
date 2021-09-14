@@ -35,20 +35,20 @@
 -- geaccepteerd. Test deze regel en neem de gegooide foutmelding op als
 -- commentaar in de uitwerking.
 
-EERST:
+--EERST:
 ALTER TABLE medewerkers
     ADD geslacht varchar(255);
 
-DAN:
+--DAN:
 ALTER TABLE medewerkers ADD CONSTRAINT
     m_geslacht_chk CHECK (geslacht = 'M' OR geslacht = 'V');
 
-TESTEN:
+--TESTEN:
 UPDATE medewerkers
 SET geslacht = 'M'
 WHERE mnr = 7369;
 
-TEST 2:
+--TEST 2:
 UPDATE medewerkers
 SET geslacht = 'K'
 WHERE mnr = 7499;
@@ -65,11 +65,11 @@ ERROR: new row for relation "medewerkers" violates check constraint "m_geslacht_
             -- en valt direct onder de directeur.
             -- Voeg de nieuwe afdeling en de nieuwe medewerker toe aan de database.
 
-INSERT INTO medewerkers (mnr, naam, voorl, functie, gbdatum, maandsal)
-VALUES (8000, 'DONK', 'A', 'DIRECTEUR', '2000-02-12', 5000);
+INSERT INTO medewerkers (mnr, naam, voorl, functie, chef, gbdatum, maandsal)
+VALUES (8000, 'DONK', 'A', 'ONDERZOEKER', 7839, '2000-02-12', 5000);
 
 INSERT INTO afdelingen (anr, naam, locatie, hoofd)
-VALUES (50, 'ONDERZOEK', 'ZWOLLE', 8000)
+VALUES (50, 'ONDERZOEK', 'ZWOLLE', 7839)
 
 
 -- SQL.S1.3. Verbetering op afdelingentabel
@@ -124,7 +124,7 @@ ALTER TABLE medewerkers ALTER COLUMN afd type numeric(3,0);
 
 Create table adressen (
                           postcode VARCHAR(6) CONSTRAINT
-                            constraint_postcode CHECK (postcode LIKE '[0-9][0-9][0-9][0-9][A-Z][A-Z]'),
+                            constraint_postcode CHECK (postcode LIKE '[0-9][0-9][0-9][0-9][a-z,A-Z][a-z,A-Z]'),
                           huisnummer varchar(10),
                           ingangsdatum DATE,
                           einddatum DATE
@@ -135,8 +135,7 @@ Create table adressen (
                           PRIMARY KEY (postcode, huisnummer, ingangsdatum),
                           FOREIGN KEY (med_mnr) REFERENCES medewerkers(mnr));
 
---WERKT NIET:
-    INSERT INTO adressen VALUES ('1234AZ' ,'15A' ,'1997-08-31', '2020-08-31', 0900262626, 1);
+    INSERT INTO adressen (postcode, huisnummer,ingangsdatum, einddatum,telefoon,med_mnr) VALUES ('1234AZ' ,'15A' ,'1997-08-31', '2020-08-31', 0900262626, 1);
 
 -- SQL.S1.5. Commissie
 --
