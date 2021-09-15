@@ -30,16 +30,16 @@
 -- S2.1. Vier-daagse cursussen
 --
 -- Geef code en omschrijving van alle cursussen die precies vier dagen duren.
--- DROP VIEW IF EXISTS s2_1; CREATE OR REPLACE VIEW s2_1 AS                                                     -- [TEST]
+DROP VIEW IF EXISTS s2_1; CREATE OR REPLACE VIEW s2_1 AS                                                     -- [TEST]
 
-select * from cursussen
+select code, omschrijving from cursussen
 WHERE (lengte = 4);
 
 -- S2.2. Medewerkersoverzicht
 --
 -- Geef alle informatie van alle medewerkers, gesorteerd op functie,
 -- en per functie op leeftijd (van jong naar oud).
--- DROP VIEW IF EXISTS s2_2; CREATE OR REPLACE VIEW s2_2 AS                                                     -- [TEST]
+DROP VIEW IF EXISTS s2_2; CREATE OR REPLACE VIEW s2_2 AS                                                     -- [TEST]
 
 select * from medewerkers
 ORDER BY functie, gbdatum;
@@ -48,19 +48,19 @@ ORDER BY functie, gbdatum;
 --
 -- Welke cursussen zijn in Utrecht en/of in Maastricht uitgevoerd? Geef
 -- code en begindatum.
--- DROP VIEW IF EXISTS s2_3; CREATE OR REPLACE VIEW s2_3 AS                                                     -- [TEST]
+DROP VIEW IF EXISTS s2_3; CREATE OR REPLACE VIEW s2_3 AS                                                     -- [TEST]
 
-select begindatum, cursus from uitvoeringen
+select cursus, begindatum from uitvoeringen
 WHERE locatie = 'UTRECHT' OR locatie = 'MAASTRICHT';
 
 -- S2.4. Namen
 --
 -- Geef de naam en voorletters van alle medewerkers, behalve van R. Jansen.
--- DROP VIEW IF EXISTS s2_4; CREATE OR REPLACE VIEW s2_4 AS                                                     -- [TEST]
+DROP VIEW IF EXISTS s2_4; CREATE OR REPLACE VIEW s2_4 AS                                                     -- [TEST]
 
 select naam, voorl from medewerkers
-WHERE naam != 'JANSEN'
-AND voorl != 'R';
+WHERE NOT (naam = 'JANSEN'
+    AND voorl = 'R');
 
 -- S2.5. Nieuwe SQL-cursus
 --
@@ -68,18 +68,17 @@ AND voorl != 'R';
 -- komende 2 maart. De cursus wordt gegeven in Leerdam door Nick Smit.
 -- Voeg deze gegevens toe.
 INSERT INTO uitvoeringen
-VALUES('S02', '2022-03-02', 7902, 'LEERDAM')
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+VALUES('S02', '2021-03-02', 7369, 'LEERDAM')
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
 
 -- S2.6. Stagiairs
 --
 -- Neem één van je collega-studenten aan als stagiair ('STAGIAIR') en
 -- voer zijn of haar gegevens in. Kies een personeelnummer boven de 8000.
-INSERT INTO medewerkers
-VALUES(8888, 'egemen', 'E', 'STAGIAR', 8888, '1900-01-01', 0.0, NULL, 20, 'M')
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
-
+INSERT INTO medewerkers (mnr, naam, voorl, functie, gbdatum, maandsal)
+VALUES(8888, 'egemen', 'E', 'STAGIAIR', '1900-01-01', 0.0)
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
 -- S2.7. Nieuwe schaal
 --
@@ -87,7 +86,7 @@ ON CONFLICT DO NOTHING;                                                         
 -- tussen de 3001 en 4000 euro verdienen. Zij krijgen een toelage van 500 euro.
 INSERT INTO schalen
 VALUES(6, 3001, 4001, 500)
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
 
 -- S2.8. Nieuwe cursus
@@ -97,22 +96,22 @@ ON CONFLICT DO NOTHING;                                                         
 -- mensen in.
 INSERT INTO cursussen
 VALUES('D&P', 'Data & Persistency', 'DSG', 60)
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 INSERT INTO uitvoeringen
 VALUES('D&P', '2021-09-13', 8888,'LEERDAM')
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 INSERT INTO uitvoeringen
 VALUES('D&P', '2021-10-14', 8888,'LEERDAM')
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 INSERT INTO inschrijvingen
 VALUES (7902,'D&P','2021-09-13',1)
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 INSERT INTO inschrijvingen
 VALUES (7934,'D&P','2021-09-13',1)
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 INSERT INTO inschrijvingen
 VALUES (8000,'D&P','2021-10-14',1)
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
 
 -- S2.9. Salarisverhoging
@@ -142,8 +141,8 @@ WHERE naam = 'MARTENS';
 -- Waarom lukt dit (niet)?
 
 --werkt niet omdat deze persoon nog staat ingeschreven (zijn key) in de tabel inschrijvingen
-DELETE FROM medewerkers
-WHERE naam = 'ALDERS';
+--DELETE FROM medewerkers
+--WHERE naam = 'ALDERS';
 
 -- S2.11. Nieuwe afdeling
 --
@@ -152,16 +151,15 @@ WHERE naam = 'ALDERS';
 -- Zorg voor de juiste invoer van deze gegevens.
 INSERT INTO medewerkers
 VALUES(9999, 'KattenVlinde', 'M', 'PRESIDENT', 9999, '2000-01-01', 5000.00, NULL, 20, 'M')
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
 UPDATE medewerkers
 SET afd = 160
-WHERE naam = 'KattenVlinde'
-ON CONFLICT DO NOTHING;
+WHERE naam = 'KattenVlinde';
 
 INSERT INTO afdelingen (naam, locatie, hoofd)
 VALUES('FINANCIEN', 'LEERDAM', 9999)
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+    ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
 
 
