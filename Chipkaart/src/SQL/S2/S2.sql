@@ -110,7 +110,7 @@ INSERT INTO inschrijvingen
 VALUES (7934,'D&P','2021-09-13',1)
     ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 INSERT INTO inschrijvingen
-VALUES (8000,'D&P','2021-10-14',1)
+VALUES (7902,'D&P','2021-10-14',1)
     ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
 

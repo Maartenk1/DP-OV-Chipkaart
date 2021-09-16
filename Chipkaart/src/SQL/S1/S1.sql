@@ -49,33 +49,36 @@ SET geslacht = 'M'
 WHERE mnr = 7369;
 
 --TEST 2:
-UPDATE medewerkers
-SET geslacht = 'K'
-WHERE mnr = 7499;
+-- UPDATE medewerkers
+-- SET geslacht = 'K'
+-- WHERE mnr = 7499;
 
-ERROR: new row for relation "medewerkers" violates check constraint "m_geslacht_chk" DETAIL: Failing row contains (7499, ALDERS, JAM, VERKOPER, 7698, 1981-02-20, 1600.00, 200.00, 30, K). SQL state: 23514
+--ERROR: new row for relation "medewerkers" violates check constraint "m_geslacht_chk" DETAIL: Failing row contains (7499, ALDERS, JAM, VERKOPER, 7698, 1981-02-20, 1600.00, 200.00, 30, K). SQL state: 23514
 
 
 
-            -- SQL.S1.2. Nieuwe afdeling
+-- SQL.S1.2. Nieuwe afdeling
 --
-        -- Het bedrijf krijgt een nieuwe onderzoeksafdeling 'ONDERZOEK' in Zwolle.
-            -- Om de onderzoeksafdeling op te zetten en daarna te leiden wordt de
+-- Het bedrijf krijgt een nieuwe onderzoeksafdeling 'ONDERZOEK' in Zwolle.
+-- Om de onderzoeksafdeling op te zetten en daarna te leiden wordt de
 -- nieuwe medewerker A DONK aangenomen. Hij krijgt medewerkersnummer 8000
-            -- en valt direct onder de directeur.
-            -- Voeg de nieuwe afdeling en de nieuwe medewerker toe aan de database.
+-- en valt direct onder de directeur.
+-- Voeg de nieuwe afdeling en de nieuwe medewerker toe aan de database.
 
 INSERT INTO medewerkers (mnr, naam, voorl, functie, chef, gbdatum, maandsal)
-VALUES (8000, 'DONK', 'A', 'ONDERZOEKER', 7839, '2000-02-12', 5000);
+VALUES (8000, 'DONK', 'A', 'MANAGER', 7839, '2000-02-12', 5000);
 
 INSERT INTO afdelingen (anr, naam, locatie, hoofd)
-VALUES (50, 'ONDERZOEK', 'ZWOLLE', 7839)
+VALUES (50, 'ONDERZOEK', 'ZWOLLE', 8000);
 
+UPDATE medewerkers
+SET afd = 30
+WHERE mnr = 8000;
 
 -- SQL.S1.3. Verbetering op afdelingentabel
 --
-       -- We gaan een aantal verbeteringen doorvoeren aan de tabel `afdelingen`:
-       --   a) Maak een sequence die afdelingsnummers genereert. Denk aan de beperking
+-- We gaan een aantal verbeteringen doorvoeren aan de tabel `afdelingen`:
+--   a) Maak een sequence die afdelingsnummers genereert. Denk aan de beperking
 --      dat afdelingsnummers veelvouden van 10 zijn.
 --   b) Voeg een aantal afdelingen toe aan de tabel, maak daarbij gebruik van
 --      de nieuwe sequence.
@@ -111,11 +114,11 @@ ALTER TABLE medewerkers ALTER COLUMN afd type numeric(3,0);
 
 -- SQL.S1.4. Adressen
 --
-        -- Maak een tabel `adressen`, waarin de adressen van de medewerkers worden
+-- Maak een tabel `adressen`, waarin de adressen van de medewerkers worden
 -- opgeslagen (inclusief adreshistorie). De tabel bestaat uit onderstaande
 -- kolommen. Voeg minimaal één rij met adresgegevens van A DONK toe.
-            --
-            --    postcode      PK, bestaande uit 6 karakters (4 cijfers en 2 letters)
+--
+--    postcode      PK, bestaande uit 6 karakters (4 cijfers en 2 letters)
 --    huisnummer    PK
 --    ingangsdatum  PK
 --    einddatum     moet na de ingangsdatum liggen
@@ -124,7 +127,7 @@ ALTER TABLE medewerkers ALTER COLUMN afd type numeric(3,0);
 
 Create table adressen (
                           postcode VARCHAR(6) CONSTRAINT
-                            constraint_postcode CHECK (postcode LIKE '[0-9][0-9][0-9][0-9][a-z,A-Z][a-z,A-Z]'),
+                              constraint_postcode CHECK (postcode LIKE '[0-9][0-9][0-9][0-9][a-z,A-Z][a-z,A-Z]'),
                           huisnummer varchar(10),
                           ingangsdatum DATE,
                           einddatum DATE
@@ -135,11 +138,11 @@ Create table adressen (
                           PRIMARY KEY (postcode, huisnummer, ingangsdatum),
                           FOREIGN KEY (med_mnr) REFERENCES medewerkers(mnr));
 
-    INSERT INTO adressen (postcode, huisnummer,ingangsdatum, einddatum,telefoon,med_mnr) VALUES ('1234AZ' ,'15A' ,'1997-08-31', '2020-08-31', 0900262626, 1);
+INSERT INTO adressen (postcode, huisnummer,ingangsdatum, einddatum,telefoon,med_mnr) VALUES ('1234AZ' ,'15A' ,'1997-08-31', '2020-08-31', 0900262626, 1);
 
 -- SQL.S1.5. Commissie
 --
-        -- De commissie van een medewerker (kolom `comm`) moet een bedrag bevatten als de medewerker een functie als
+-- De commissie van een medewerker (kolom `comm`) moet een bedrag bevatten als de medewerker een functie als
 -- 'VERKOPER' heeft, anders moet de commissie NULL zijn. Schrijf hiervoor een beperkingsregel. Gebruik onderstaande
 -- 'illegale' INSERTs om je beperkingsregel te controleren.
 
@@ -158,15 +161,15 @@ VALUES (8002, 'JANSEN', 'M', 'VERKOPER', 7698, '1981-07-17', 1000, NULL);
 -- Met onderstaande query kun je je code testen. Zie bovenaan dit bestand
 -- voor uitleg.
 
-SELECT * FROM test_exists('SQL.S1.1', 1) AS resultaat
+SELECT * FROM test_exists('S1.1', 1) AS resultaat
 UNION
-SELECT * FROM test_exists('SQL.S1.2', 1) AS resultaat
+SELECT * FROM test_exists('S1.2', 1) AS resultaat
 UNION
-SELECT 'SQL.S1.3 wordt niet getest: geen test mogelijk.' AS resultaat
+SELECT 'S1.3 wordt niet getest: geen test mogelijk.' AS resultaat
 UNION
-SELECT * FROM test_exists('SQL.S1.4', 6) AS resultaat
+SELECT * FROM test_exists('S1.4', 6) AS resultaat
 UNION
-SELECT 'SQL.S1.5 wordt niet getest: handmatige test beschikbaar.' AS resultaat
+SELECT 'S1.5 wordt niet getest: handmatige test beschikbaar.' AS resultaat
 ORDER BY resultaat;
 
 
