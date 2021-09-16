@@ -62,7 +62,7 @@ public class OVchipkaart {
         chipkaart += "datum " + java.sql.Date.valueOf(String.valueOf(geldig_tot))+ ", ";
         chipkaart += "klasse " + klasse + ", ";
         chipkaart += "saldo €" + saldo + ", ";
-        chipkaart += "reiziger_id " + reiziger_id + "\n";
+        chipkaart += "reiziger_id " + reiziger_id;
         return chipkaart;
     }
 }

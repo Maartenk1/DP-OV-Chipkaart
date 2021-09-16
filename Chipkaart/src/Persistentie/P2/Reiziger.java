@@ -80,7 +80,7 @@ public class Reiziger {
         reiziger += voorletters + " ";
         reiziger += tussenvoegsel + " ";
         reiziger += achternaam + " ";
-        reiziger += java.sql.Date.valueOf(String.valueOf(geboortedatum))+ "\n";
+        reiziger += java.sql.Date.valueOf(String.valueOf(geboortedatum));
         return reiziger;
     }
 

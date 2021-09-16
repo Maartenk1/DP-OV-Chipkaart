@@ -72,7 +72,7 @@ public class Adres {
         adres += huisnummer + " ";
         adres += straat + " ";
         adres += woonplaats + " ";
-        adres += reizigerid + "\n";
+        adres += reizigerid;
         return adres;
     }
 }
