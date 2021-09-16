@@ -8,15 +8,14 @@ public class Adres {
     private String woonplaats;
     private int reizigerid;
 
-    public Adres(int i, String s, String s1, String havenlaan, String utrecht, int i1) {
-        adresid = i;
-        postcode = s;
-        huisnummer = s1;
-        straat = havenlaan;
-        woonplaats = utrecht;
-        reizigerid = i1;
+    public Adres(int adresid, String postcode, String huisnummer, String straat, String woonplaats, int reizigerid) {
+        this.adresid = adresid;
+        this.postcode = postcode;
+        this.huisnummer = huisnummer;
+        this.straat = straat;
+        this.woonplaats = woonplaats;
+        this.reizigerid = reizigerid;
     }
-
 
     public String getPostcode() {
         return postcode;
@@ -73,7 +72,7 @@ public class Adres {
         adres += huisnummer + " ";
         adres += straat + " ";
         adres += woonplaats + " ";
-        adres += reizigerid + " ";
+        adres += reizigerid + "\n";
         return adres;
     }
 }
