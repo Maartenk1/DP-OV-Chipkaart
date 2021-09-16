@@ -1,6 +1,10 @@
 package Persistentie.P2;
 
+import Persistentie.P4.OVchipkaart;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Reiziger {
 
@@ -9,15 +13,19 @@ public class Reiziger {
     private String tussenvoegsel;
     private String achternaam;
     private Date geboortedatum;
+    private List<OVchipkaart> chipkaart = new ArrayList<>();
 
-    public Reiziger(int re, String vl, String tv, String an, Date gb) {
-        id = re;
-        voorletters = vl;
-        tussenvoegsel = tv;
-        achternaam = an;
-        geboortedatum = gb;
+    public Reiziger(String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
+        this.voorletters = voorletters;
+        this.tussenvoegsel = tussenvoegsel;
+        this.achternaam = achternaam;
+        this.geboortedatum = geboortedatum;
     }
 
+    public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
+        this(voorletters, tussenvoegsel, achternaam, geboortedatum);
+        this.id = id;
+    }
 
     public int getId() {
         return id;
@@ -59,12 +67,21 @@ public class Reiziger {
         this.geboortedatum = geboortedatum;
     }
 
+    public List<OVchipkaart> getChipkaart() {
+        return chipkaart;
+    }
+
+    public void setChipkaart(List<OVchipkaart> chipkaart) {
+        this.chipkaart = chipkaart;
+    }
+
     public String toString(){
         String reiziger = "#" + id + " ";
         reiziger += voorletters + " ";
         reiziger += tussenvoegsel + " ";
         reiziger += achternaam + " ";
-        reiziger += java.sql.Date.valueOf(String.valueOf(geboortedatum))+ " ";
+        reiziger += java.sql.Date.valueOf(String.valueOf(geboortedatum))+ "\n";
         return reiziger;
     }
+
 }
