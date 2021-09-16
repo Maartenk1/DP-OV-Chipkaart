@@ -46,7 +46,6 @@ public class Main {
         for (Reiziger r : reizigers) {
             System.out.println(r);
         }
-        System.out.println();
 
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(81, "S", "", "Boers", Date.valueOf(gbdatum));
@@ -57,7 +56,7 @@ public class Main {
         rdao.delete(sietske);
 
         // Maak een nieuwe reiziger aan en persisteer deze in de database
-        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
+        System.out.print("\n[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
         rdao.save(sietske);
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
@@ -102,9 +101,12 @@ public class Main {
         Reiziger re = new Reiziger(1, "S", "", "Boers", Date.valueOf("1981-03-14"));
         System.out.println(adao.findByReiziger(re));
 
-        //Vind alle adressen
-        System.out.println("\n[Test] Vind alle adressen");
-        System.out.println(adao.findAll());
+        // Haal alle reizigers op uit de database
+        List<Adres> adressen = adao.findAll();
+        System.out.println("\n[Test] AdresDAO.findAll() geeft de volgende adressen:");
+        for (Adres adres : adressen) {
+            System.out.println(adres);
+        }
 
     }
 
@@ -129,14 +131,20 @@ public class Main {
         System.out.println("\n[Test] Vind chipkaart met ID");
         System.out.println(cdao.findById(35283));
 
-        //Vind adres doormiddel van reiziger
+        //Vind chipkaart doormiddel van reiziger
         System.out.println("\n[Test] Vind chipkaart doormiddel van reiziger");
         Reiziger re = new Reiziger(2, "S", "", "Boers", Date.valueOf("1981-03-14"));
-        System.out.println(cdao.findByReiziger(re));
+        List<OVchipkaart> chipkaarten = cdao.findByReiziger(re);
+        for (OVchipkaart chipkaart2 : chipkaarten) {
+            System.out.println(chipkaart2);
+        }
 
-        //Vind alle adressen
-        System.out.println("\n[Test] Vind alle chipkaarten");
-        System.out.println(cdao.findAll());
+        //Vind alle chipkaarten
+        List<OVchipkaart> chipkaarten2 = cdao.findAll();
+        System.out.println("\n[Test] OVChipkaartDAO.findAll() geeft de volgende chipkaarten:");
+        for (OVchipkaart chipkaart3 : chipkaarten2) {
+            System.out.println(chipkaart3);
+        }
 
     }
 }
