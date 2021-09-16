@@ -1,4 +1,6 @@
-package Persistentie.P2;
+package Persistentie.P3;
+
+import Persistentie.P2.Reiziger;
 
 import java.sql.SQLException;
 import java.util.List;

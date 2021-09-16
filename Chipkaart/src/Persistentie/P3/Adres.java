@@ -1,4 +1,4 @@
-package Persistentie.P2;
+package Persistentie.P3;
 
 public class Adres {
     private int adresid;
