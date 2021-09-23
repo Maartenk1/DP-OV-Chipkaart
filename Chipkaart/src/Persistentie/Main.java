@@ -1,4 +1,4 @@
-package Persistentie.Main;
+package Persistentie;
 
 import Persistentie.P2.Reiziger;
 import Persistentie.P2.ReizigerDAO;
@@ -50,11 +50,6 @@ public class Main {
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(81, "S", "", "Boers", Date.valueOf(gbdatum));
 
-        //  delete reiziger
-        Reiziger de = new Reiziger(14, "S", "", "Boers", Date.valueOf("1981-03-14"));
-        rdao.delete(de);
-        rdao.delete(sietske);
-
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         System.out.print("\n[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
         rdao.save(sietske);
@@ -65,6 +60,8 @@ public class Main {
         Reiziger aap = new Reiziger(81, "Z", "", "Boers", Date.valueOf("1981-03-14"));
         rdao.update(aap);
 
+        //  delete reiziger
+        rdao.delete(sietske);
 
         //Vind reiziger met id
         System.out.println("\n[Test] Vind reiziger met ID");
@@ -80,8 +77,6 @@ public class Main {
         System.out.println("\n---------- Test AdresDAO -------------");
 
 //         Maak een nieuw adres aan en persisteer deze in de database
-        Reiziger kees = new Reiziger(14, "S", "", "Boers", Date.valueOf("1981-03-14"));
-        rdao.save(kees);
         Adres Utrecht = new Adres(8, "4444 AK", "22", "Havenlaan", "Utrecht", 14);
         adao.save(Utrecht);
 
