@@ -15,56 +15,73 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     @Override
     public boolean save(Reiziger reiziger) throws SQLException {
-        Statement myStat = conn.createStatement();
-        int id = reiziger.getId();
-        String voorletters = reiziger.getVoorletters();
-        String tussenvoegsel = null;
-        if(reiziger.getTussenvoegsel() != null) {
-            tussenvoegsel = reiziger.getTussenvoegsel();
+        try{
+            PreparedStatement pstmnt = conn.prepareStatement("INSERT INTO reiziger (reiziger_id , voorletters, tussenvoegsel, achternaam, geboortedatum) VALUES (?, ?, ?, ?, ?)");
+            pstmnt.setInt(1, reiziger.getId());
+            pstmnt.setString(2, reiziger.getVoorletters());
+            if(reiziger.getTussenvoegsel() != null) {
+                pstmnt.setString(3, reiziger.getTussenvoegsel());
+            }else{
+                pstmnt.setString(3, null);
+                }
+
+            pstmnt.setString(4, reiziger.getAchternaam());
+            pstmnt.setDate(5, (Date) reiziger.getGeboortedatum());
+            pstmnt.executeUpdate();
+        }catch (Exception e){
+            System.out.println("something  went wrong");
         }
-        String achternaam = reiziger.getAchternaam();
-        java.util.Date geboortedatum = reiziger.getGeboortedatum();
-        int r = myStat.executeUpdate("insert into reiziger values("+id +",' "+voorletters+"',' "+tussenvoegsel+"',' "+achternaam+"','"+geboortedatum+"');");
         return true;
     }
 
     @Override
     public boolean update(Reiziger reiziger) throws SQLException {
-        Statement myStat = conn.createStatement();
-        int id = reiziger.getId();
-        String voorletters = reiziger.getVoorletters();
-        String tussenvoegsel = " ";
-        if(reiziger.getTussenvoegsel() != null) {
-            tussenvoegsel = reiziger.getTussenvoegsel();
+      try{
+            PreparedStatement pstmnt = conn.prepareStatement("UPDATE reiziger SET reiziger_id = ?, voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboortedatum = ? WHERE reiziger_id = ?");
+            pstmnt.setInt(1, reiziger.getId());
+            pstmnt.setString(2, reiziger.getVoorletters());
+            if(reiziger.getTussenvoegsel() != null) {
+                pstmnt.setString(3, reiziger.getTussenvoegsel());
+            }else{
+                pstmnt.setString(3, null);
+            }
+            pstmnt.setString(4, reiziger.getAchternaam());
+            pstmnt.setDate(5, (Date) reiziger.getGeboortedatum());
+        pstmnt.setInt(6, reiziger.getId());
+            pstmnt.executeUpdate();
+        }catch (Exception e){
+            System.out.println("something  went wrong");
         }
-        String achternaam = reiziger.getAchternaam();
-        java.util.Date geboortedatum = reiziger.getGeboortedatum();
-        int r = myStat.executeUpdate("update reiziger set reiziger_id = ("+id +"), voorletters = ('"+voorletters+"') , tussenvoegsel = ('"+tussenvoegsel+"') , achternaam = ('"+achternaam+"') , geboortedatum = ('"+geboortedatum+"') where reiziger_id = ("+id+")");
         return true;
     }
 
     @Override
     public boolean delete(Reiziger reiziger) throws SQLException {
-        int id = reiziger.getId();
-        Statement myStat = conn.createStatement();
-        int r = myStat.executeUpdate("delete from reiziger where reiziger_id = ("+id+") ");
+        try{
+            PreparedStatement pstmnt = conn.prepareStatement("DELETE FROM reiziger WHERE reiziger_id = ?");
+            pstmnt.setInt(1, reiziger.getId());
+            pstmnt.executeUpdate();
+        }catch (Exception e){
+            System.out.println("something went wrong");
+        }
         return true;
     }
 
     @Override
     public Reiziger findById(int id) throws SQLException {
-        Statement myStat = conn.createStatement();
-        ResultSet reiziger = myStat.executeQuery("select * from reiziger where reiziger_id = ("+id+")");
+        PreparedStatement pstmnt = conn.prepareStatement("SELECT * FROM reiziger WHERE reiziger_id = ?");
+        pstmnt.setInt(1, id);
+        ResultSet result = pstmnt.executeQuery();
         ArrayList<Reiziger> lijst = new ArrayList<>();
-        while (reiziger.next()) {
-            int reizigerid = reiziger.getInt("reiziger_id");
-            String voorletters = reiziger.getString("voorletters");
+        while (result.next()) {
+            int reizigerid = result.getInt("reiziger_id");
+            String voorletters = result.getString("voorletters");
             String tussenvoegsel = null;
-            if(reiziger.getString("tussenvoegsel") != null) {
-                tussenvoegsel = reiziger.getString("tussenvoegsel");
+            if(result.getString("tussenvoegsel") != null) {
+                tussenvoegsel = result.getString("tussenvoegsel");
             }
-            String achternaam = reiziger.getString("achternaam");
-            Date geboortedatum = reiziger.getDate("geboortedatum");
+            String achternaam = result.getString("achternaam");
+            Date geboortedatum = result.getDate("geboortedatum");
             Reiziger r1 = new Reiziger(reizigerid,voorletters,tussenvoegsel, achternaam, geboortedatum);
             lijst.add(r1);
         }
@@ -73,18 +90,19 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     @Override
     public List<Reiziger> findByGbdatum(String datum) throws SQLException {
-        Statement myStat = conn.createStatement();
-        ResultSet reiziger = myStat.executeQuery("select * from reiziger where geboortedatum = ('"+datum+"')");
+      PreparedStatement pstmnt = conn.prepareStatement("SELECT * FROM reiziger WHERE geboortedatum = ?");
+        pstmnt.setDate(1, Date.valueOf(datum));
+        ResultSet result = pstmnt.executeQuery();
         ArrayList<Reiziger> lijst = new ArrayList<>();
-        while (reiziger.next()) {
-            int reizigerid = reiziger.getInt("reiziger_id");
-            String voorletters = reiziger.getString("voorletters");
+        while (result.next()) {
+            int reizigerid = result.getInt("reiziger_id");
+            String voorletters = result.getString("voorletters");
             String tussenvoegsel = null;
-            if(reiziger.getString("tussenvoegsel") != null) {
-                tussenvoegsel = reiziger.getString("tussenvoegsel");
+            if(result.getString("tussenvoegsel") != null) {
+                tussenvoegsel = result.getString("tussenvoegsel");
             }
-            String achternaam = reiziger.getString("achternaam");
-            Date geboortedatum = reiziger.getDate("geboortedatum");
+            String achternaam = result.getString("achternaam");
+            Date geboortedatum = result.getDate("geboortedatum");
             Reiziger r1 = new Reiziger(reizigerid,voorletters,tussenvoegsel, achternaam, geboortedatum);
             lijst.add(r1);
         }
@@ -93,18 +111,18 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     @Override
     public List<Reiziger> findAll() throws SQLException {
-        Statement myStat = conn.createStatement();
-        ResultSet reiziger = myStat.executeQuery("select * from reiziger");
+        PreparedStatement pstmnt = conn.prepareStatement("SELECT * FROM reiziger");
+        ResultSet result = pstmnt.executeQuery();
         ArrayList<Reiziger> lijst = new ArrayList<>();
-        while (reiziger.next()) {
-            int reizigerid = reiziger.getInt("reiziger_id");
-            String voorletters = reiziger.getString("voorletters");
+        while (result.next()) {
+            int reizigerid = result.getInt("reiziger_id");
+            String voorletters = result.getString("voorletters");
             String tussenvoegsel = null;
-            if(reiziger.getString("tussenvoegsel") != null) {
-                tussenvoegsel = reiziger.getString("tussenvoegsel");
+            if(result.getString("tussenvoegsel") != null) {
+                tussenvoegsel = result.getString("tussenvoegsel");
             }
-            String achternaam = reiziger.getString("achternaam");
-            Date geboortedatum = reiziger.getDate("geboortedatum");
+            String achternaam = result.getString("achternaam");
+            Date geboortedatum = result.getDate("geboortedatum");
             Reiziger r1 = new Reiziger(reizigerid,voorletters,tussenvoegsel, achternaam, geboortedatum);
             lijst.add(r1);
         }
