@@ -6,10 +6,10 @@ public class OVchipkaart {
     private int kaart_nummer;
     private Date geldig_tot;
     private int klasse;
-    private int saldo;
+    private float saldo;
     private int reiziger_id;
 
-    public OVchipkaart(int kaart_nummer, Date geldig_tot, int klasse, int saldo, int reiziger_id) {
+    public OVchipkaart(int kaart_nummer, Date geldig_tot, int klasse, float saldo, int reiziger_id) {
         this.kaart_nummer = kaart_nummer;
         this.geldig_tot = geldig_tot;
         this.klasse = klasse;
@@ -41,11 +41,11 @@ public class OVchipkaart {
         this.klasse = klasse;
     }
 
-    public int getSaldo() {
+    public float getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(int saldo) {
+    public void setSaldo(float saldo) {
         this.saldo = saldo;
     }
 

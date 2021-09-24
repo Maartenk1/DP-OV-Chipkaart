@@ -23,7 +23,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             pstmnt.setInt(1, chipkaart.getKaart_nummer());
             pstmnt.setDate(2, chipkaart.getGeldig_tot());
             pstmnt.setInt(3, chipkaart.getKlasse());
-            pstmnt.setInt(4, chipkaart.getSaldo());
+            pstmnt.setFloat(4, chipkaart.getSaldo());
             pstmnt.setInt(5, chipkaart.getReiziger_id());
             pstmnt.executeUpdate();
         }catch (Exception e){
@@ -39,7 +39,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             pstmnt.setInt(1, chipkaart.getKaart_nummer());
             pstmnt.setDate(2, chipkaart.getGeldig_tot());
             pstmnt.setInt(3, chipkaart.getKlasse());
-            pstmnt.setInt(4, chipkaart.getSaldo());
+            pstmnt.setFloat(4, chipkaart.getSaldo());
             pstmnt.setInt(5, chipkaart.getReiziger_id());
             pstmnt.setInt(6, chipkaart.getKaart_nummer());
             pstmnt.executeUpdate();
@@ -71,7 +71,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             int kaart_nummer = result.getInt("kaart_nummer");
             Date geldig_tot = result.getDate("geldig_tot");
             int klasse = result.getInt("klasse");
-            int saldo = result.getInt("saldo");
+            float saldo = result.getFloat("saldo");
             int reiziger_id = result.getInt("reiziger_id");
             OVchipkaart chipkaart1 = new OVchipkaart(kaart_nummer,geldig_tot,klasse, saldo, reiziger_id);
             lijst.add(chipkaart1);
@@ -88,7 +88,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             int kaart_nummer = result.getInt("kaart_nummer");
             Date geldig_tot = result.getDate("geldig_tot");
             int klasse = result.getInt("klasse");
-            int saldo = result.getInt("saldo");
+            float saldo = result.getFloat("saldo");
             int reiziger_id = result.getInt("reiziger_id");
             OVchipkaart chipkaart1 = new OVchipkaart(kaart_nummer,geldig_tot,klasse, saldo, reiziger_id);
             lijst.add(chipkaart1);
@@ -107,7 +107,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             int kaart_nummer = result.getInt("kaart_nummer");
             Date geldig_tot = result.getDate("geldig_tot");
             int klasse = result.getInt("klasse");
-            int saldo = result.getInt("saldo");
+            float saldo = result.getFloat("saldo");
             int reiziger_id = result.getInt("reiziger_id");
             OVchipkaart chipkaart1 = new OVchipkaart(kaart_nummer,geldig_tot,klasse, saldo, reiziger_id);
             lijst.add(chipkaart1);

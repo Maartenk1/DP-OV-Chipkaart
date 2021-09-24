@@ -9,6 +9,9 @@ import Persistentie.P3.AdresDAOPsql;
 import Persistentie.P4.OVChipkaartDAO;
 import Persistentie.P4.OVChipkaartDAOPsql;
 import Persistentie.P4.OVchipkaart;
+import Persistentie.P5.Product;
+import Persistentie.P5.ProductDAO;
+import Persistentie.P5.ProductDAOPsql;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -25,6 +28,7 @@ public class Main {
         testReizigerDAO(new ReizigerDAOPsql(connection));
         testAdresDAO(new AdresDAOPsql(connection), new ReizigerDAOPsql(connection));
         testOVChipkaartDAO(new OVChipkaartDAOPsql(connection), new ReizigerDAOPsql(connection));
+        testProductDAO(new ProductDAOPsql(connection));
 
         closeConnection();
     }
@@ -140,6 +144,24 @@ public class Main {
         for (OVchipkaart chipkaart3 : chipkaarten2) {
             System.out.println(chipkaart3);
         }
+
+    }
+
+    public static void testProductDAO(ProductDAO pdao) throws SQLException {
+        System.out.println("\n---------- Test ProductDAO -------------");
+
+        // Maak een nieuw product aan en persisteer deze in de database
+        Product product1 = new Product(7, "40% Korting", "Korting is 40%", 60);
+        pdao.save(product1);
+
+        // Verander chipkaart
+        Product product2 = new Product(7, "80% Korting", "Korting is 80%", 60);
+        pdao.update(product2);
+
+        //delete chipkaart
+        pdao.delete(product2);
+
+
 
     }
 }
