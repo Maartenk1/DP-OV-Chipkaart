@@ -31,8 +31,8 @@
 -- geboren zijn, en trainer of verkoper zijn.
 DROP VIEW IF EXISTS s4_1; CREATE OR REPLACE VIEW s4_1 AS                                                     -- [TEST]
 SELECT mnr, functie, gbdatum FROM medewerkers
-WHERE gbdatum <= '1980-01-01' AND functie = 'VERKOPER'
-   OR gbdatum <= '1980-01-01' AND functie = 'TRAINER';
+WHERE gbdatum <= TO_DATE('01-01-1980', 'dd-mm-yyyy') AND functie = 'VERKOPER'
+   OR gbdatum <= TO_DATE('01-01-1980', 'dd-mm-yyyy') AND functie = 'TRAINER';
 
 -- S4.2.
 -- Geef de naam van de medewerkers met een tussenvoegsel (b.v. 'van der').
@@ -45,7 +45,7 @@ WHERE naam LIKE '% %';
 -- cursusuitvoeringen in 2019 met minstens drie inschrijvingen.
 DROP VIEW IF EXISTS s4_3; CREATE OR REPLACE VIEW s4_3 AS                                                     -- [TEST]
 SELECT cursus, begindatum, COUNT(cursus) AS aantal_inschrijvingen  from inschrijvingen
-WHERE begindatum >= '2019-01-01' AND begindatum <= '2019-12-29'
+WHERE begindatum >= TO_DATE('01-01-2019', 'dd-mm-yyyy') AND begindatum <= TO_DATE('29-12-2019', 'dd-mm-yyyy')
 GROUP BY cursus, begindatum
 HAVING COUNT (cursus)>=3;
 
