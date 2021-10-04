@@ -9,7 +9,7 @@ import java.util.List;
 public interface OVChipkaartDAO {
     public boolean save(OVchipkaart chipkaart) throws SQLException;
 
-    public boolean update(OVchipkaart chipkaart) throws SQLException;
+    public List<OVchipkaart> update(Reiziger reiziger) throws SQLException;
 
     public boolean delete(OVchipkaart chipkaart) throws SQLException;
 

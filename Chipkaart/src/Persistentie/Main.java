@@ -17,6 +17,8 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Main {
@@ -28,7 +30,7 @@ public class Main {
         testReizigerDAO(new ReizigerDAOPsql(connection));
         testAdresDAO(new AdresDAOPsql(connection), new ReizigerDAOPsql(connection));
         testOVChipkaartDAO(new OVChipkaartDAOPsql(connection), new ReizigerDAOPsql(connection));
-        testProductDAO(new ProductDAOPsql(connection));
+        testProductDAO(new ProductDAOPsql(connection),new OVChipkaartDAOPsql(connection), new ReizigerDAOPsql(connection));
 
         closeConnection();
     }
@@ -52,20 +54,20 @@ public class Main {
         }
 
         String gbdatum = "1981-03-14";
-        Reiziger sietske = new Reiziger(81, "S", "", "Boers", Date.valueOf(gbdatum));
+        Reiziger sietske = new Reiziger( 15,"S", "van", "Boers", Date.valueOf(gbdatum));
 
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         System.out.print("\n[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
         rdao.save(sietske);
         reizigers = rdao.findAll();
-        System.out.println(reizigers.size() + " reizigers\n");
+        System.out.println(reizigers.size() + " reizigers");
 
         // Verander reiziger
-        Reiziger aap = new Reiziger(81, "Z", "", "Boers", Date.valueOf("1981-03-14"));
+        Reiziger aap = new Reiziger(15, "Z", "", "Boers", Date.valueOf("1981-03-14"));
         rdao.update(aap);
 
         //  delete reiziger
-        rdao.delete(sietske);
+        rdao.delete(aap);
 
         //Vind reiziger met id
         System.out.println("\n[Test] Vind reiziger met ID");
@@ -92,7 +94,7 @@ public class Main {
         adao.delete(Utrecht);
 
         //Vind adres bij id
-        System.out.println("\n[Test] Vind adres met ID");
+        System.out.println("[Test] Vind adres met ID");
         System.out.println(adao.findById(1));
 
         //Vind adres doormiddel van reiziger
@@ -113,17 +115,21 @@ public class Main {
         System.out.println("\n---------- Test ChipkaartDAO -------------");
 
         // Maak een nieuwe chipkaart aan en persisteer deze in de database
-        Reiziger kees = new Reiziger(15, "S", "", "Boers", Date.valueOf("1981-03-14"));
+        Reiziger kees = new Reiziger(16, "S", "", "Boers", Date.valueOf("1981-03-14"));
         rdao.save(kees);
-        OVchipkaart chipkaart = new OVchipkaart(84533, Date.valueOf("2020-03-14"), 1, 25, 15);
-        cdao.save(chipkaart);
+        OVchipkaart chipkaart = new OVchipkaart(84533, Date.valueOf("2020-03-14"), 1, 25);
+        kees.addChipkaart(chipkaart);
+        cdao.update(kees);
 
         // Verander chipkaart
-        OVchipkaart chipkaart1 = new OVchipkaart(84533, Date.valueOf("2020-03-14") , 1, 60, 15);
-        cdao.update(chipkaart1);
+        OVchipkaart chipkaart1 = new OVchipkaart(77777, Date.valueOf("2020-03-14") , 1, 60);
+        kees.getChipkaart().remove(0);
+        kees.addChipkaart(chipkaart1);
+        cdao.update(kees);
 
         //delete chipkaart
-        cdao.delete(chipkaart);
+        kees.getChipkaart().remove(0);
+        cdao.update(kees);
         rdao.delete(kees);
 
         //Vind chipkaart bij id
@@ -147,22 +153,62 @@ public class Main {
 
     }
 
-    public static void testProductDAO(ProductDAO pdao) throws SQLException {
+    public static void testProductDAO(ProductDAO pdao, OVChipkaartDAO cdao, ReizigerDAO rdao) throws SQLException {
         System.out.println("\n---------- Test ProductDAO -------------");
 
         // Maak een nieuw product aan en persisteer deze in de database
+        // 2 lijsten aanmaken voor chipkaarten en producten
+        List<OVchipkaart> chipkaarten = new ArrayList<>();
+        List<Product> producten = new ArrayList<>();
+        // Nieuwe reiziger aanmaken en toevoegen aan de database
+        Reiziger kees = new Reiziger(17, "S", "", "Boers", Date.valueOf("1981-03-14"));
+        rdao.save(kees);
+        // Nieuwe OVchipkaart aanmaken en toevoegen aan lijst en reiziger + updaten van database
+        OVchipkaart chipkaart = new OVchipkaart(84533, Date.valueOf("2020-03-14"), 1, 25);
+        kees.addChipkaart(chipkaart);
+        chipkaarten.add(chipkaart);
+        cdao.update(kees);
+        // Nieuw product aanmaken lijst chipkaarten toevoegen aan product
         Product product1 = new Product(7, "40% Korting", "Korting is 40%", 60);
+        product1.addChipkaart(chipkaarten);
+        // Product toevoegen aan chipkaart en opslaan in de database
+        producten.add(product1);
+        chipkaart.addProduct(producten);
         pdao.save(product1);
 
-        // Verander chipkaart
-        Product product2 = new Product(7, "80% Korting", "Korting is 80%", 60);
-        pdao.update(product2);
+        // Verander product
+        // wat er fout gaat is dat er een nieuw object wordt aangeroepen terwijl het de bestaande product1 moet zijn
+        product1.setBeschrijving("Korting is 80%");
+        pdao.update(product1);
 
-        //delete chipkaart
-        pdao.delete(product2);
+        //delete product
+        // Product verwijderen uit lijsten van chipkaarten
+        product1.removeFromChipkaarten(product1);
+        // Product verwijderen uit database samen met connectie van chipkaart
+        pdao.delete(product1);
+        // chipkaart verwijderen uit lijst van reiziger en beide verwijderen uit de database
+        kees.getChipkaart().remove(0);
+        cdao.update(kees);
+        rdao.delete(kees);
 
+        //Vind product bij id
+        System.out.println("\n[Test] Vind product met ID");
+        System.out.println(pdao.findById(1));
 
+        //Vind alle producten
+        List<Product> producten2 = pdao.findAll();
+        System.out.println("\n[Test] ProductDAO.findAll() geeft de volgende producten:");
+        for (Product product2 : producten2) {
+            System.out.println(product2);
+        }
 
+        //Vind producten doormiddel van een chipkaart
+        System.out.println("\n[Test] Vind producten doormiddel van een chipkaart");
+        OVchipkaart chipkaart3 = new OVchipkaart(90537, Date.valueOf("2020-03-14") , 1, 60);
+        List<Product> producten3 = pdao.findByOVChipkaart(chipkaart3);
+        for (Product chipkaart2 : producten3) {
+            System.out.println(chipkaart2);
+        }
     }
 }
 

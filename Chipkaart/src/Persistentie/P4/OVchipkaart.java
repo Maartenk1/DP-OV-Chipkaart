@@ -1,6 +1,10 @@
 package Persistentie.P4;
 
+import Persistentie.P5.Product;
+
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OVchipkaart {
     private int kaart_nummer;
@@ -8,6 +12,7 @@ public class OVchipkaart {
     private int klasse;
     private float saldo;
     private int reiziger_id;
+    private List<Product> producten = new ArrayList<>();
 
     public OVchipkaart(int kaart_nummer, Date geldig_tot, int klasse, float saldo, int reiziger_id) {
         this.kaart_nummer = kaart_nummer;
@@ -15,6 +20,13 @@ public class OVchipkaart {
         this.klasse = klasse;
         this.saldo = saldo;
         this.reiziger_id = reiziger_id;
+    }
+
+    public OVchipkaart(int kaart_nummer, Date geldig_tot, int klasse, float saldo) {
+        this.kaart_nummer = kaart_nummer;
+        this.geldig_tot = geldig_tot;
+        this.klasse = klasse;
+        this.saldo = saldo;
     }
 
     public int getKaart_nummer() {
@@ -55,6 +67,18 @@ public class OVchipkaart {
 
     public void setReiziger_id(int reiziger_id) {
         this.reiziger_id = reiziger_id;
+    }
+
+    public List<Product> getProduct() {
+        return producten;
+    }
+
+    public void addProduct(List<Product> product) {
+        this.producten = product;
+    }
+
+    public void removeProduct(Product product){
+        producten.remove(product);
     }
 
     public String toString(){

@@ -13,7 +13,7 @@ public class Reiziger {
     private String tussenvoegsel;
     private String achternaam;
     private Date geboortedatum;
-    private List<OVchipkaart> chipkaart = new ArrayList<>();
+    private List<OVchipkaart> chipkaarten = new ArrayList<>();
 
     public Reiziger(String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
         this.voorletters = voorletters;
@@ -68,11 +68,16 @@ public class Reiziger {
     }
 
     public List<OVchipkaart> getChipkaart() {
-        return chipkaart;
+        return chipkaarten;
     }
 
-    public void setChipkaart(List<OVchipkaart> chipkaart) {
-        this.chipkaart = chipkaart;
+    public void addChipkaart(OVchipkaart chipkaart){
+        chipkaart.setReiziger_id(this.id);
+        chipkaarten.add(chipkaart);
+    }
+
+    public void removeChipkaart(OVchipkaart chipkaart){
+        chipkaarten.remove(chipkaart);
     }
 
     public String toString(){
