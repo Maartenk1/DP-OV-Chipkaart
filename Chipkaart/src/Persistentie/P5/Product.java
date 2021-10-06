@@ -72,9 +72,9 @@ public class Product {
         chipkaarten.remove(chipkaart);
     }
 
-    public void removeFromChipkaarten(Product product){
-        for(OVchipkaart chipkaart : product.getChipkaart()) {
-            chipkaart.removeProduct(product);
+    public void removeFromChipkaarten(){
+        for(OVchipkaart chipkaart : this.getChipkaart()) {
+            chipkaart.removeProduct(this);
         }
     }
 

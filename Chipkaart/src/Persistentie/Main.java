@@ -175,15 +175,14 @@ public class Main {
         producten.add(product1);
         chipkaart.addProduct(producten);
         pdao.save(product1);
-
+System.out.println(chipkaart.getProduct());
         // Verander product
-        // wat er fout gaat is dat er een nieuw object wordt aangeroepen terwijl het de bestaande product1 moet zijn
         product1.setBeschrijving("Korting is 80%");
         pdao.update(product1);
-
+        System.out.println(chipkaart.getProduct());
         //delete product
         // Product verwijderen uit lijsten van chipkaarten
-        product1.removeFromChipkaarten(product1);
+        product1.removeFromChipkaarten();
         // Product verwijderen uit database samen met connectie van chipkaart
         pdao.delete(product1);
         // chipkaart verwijderen uit lijst van reiziger en beide verwijderen uit de database
