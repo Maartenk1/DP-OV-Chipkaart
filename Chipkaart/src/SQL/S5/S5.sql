@@ -43,15 +43,14 @@ HAVING COUNT(DISTINCT cursus) = 2;
 -- zijn verbonden.
 DROP VIEW IF EXISTS s5_2; CREATE OR REPLACE VIEW s5_2 AS                                                     -- [TEST]
 SELECT mnr FROM medewerkers
-JOIN afdelingen ON afdelingen.anr = medewerkers.afd
-WHERE afdelingen.naam != 'OPLEIDINGEN';
+WHERE afd NOT IN(SELECT anr FROM afdelingen WHERE naam = 'OPLEIDINGEN');
 
 -- S5.3.
 -- Geef de nummers van alle medewerkers die de Java-cursus niet hebben
 -- gevolgd.
 DROP VIEW IF EXISTS s5_3; CREATE OR REPLACE VIEW s5_3 AS                                                     -- [TEST]
 SELECT mnr FROM medewerkers
-FULL OUTER JOIN inschrijvingen ON cursist = mnr
+                    FULL OUTER JOIN inschrijvingen ON cursist = mnr
 WHERE mnr NOT IN (SELECT cursist FROM inschrijvingen WHERE cursus = 'JAV');
 
 -- S5.4.
@@ -69,11 +68,10 @@ WHERE mnr NOT IN (SELECT chef from medewerkers WHERE chef IS NOT NULL);
 -- Geef cursuscode en begindatum van alle uitvoeringen van programmeercursussen
 -- ('BLD') in 2020.
 DROP VIEW IF EXISTS s5_5; CREATE OR REPLACE VIEW s5_5 AS                                                     -- [TEST]
-SELECT uitv.cursus, uitv.begindatum
-FROM uitvoeringen uitv
-JOIN cursussen curs ON curs.code = uitv.cursus
-WHERE curs.type='BLD'
-AND uitv.begindatum BETWEEN '2020-01-01' AND '2020-12-31';
+SELECT cursus, begindatum
+FROM uitvoeringen
+WHERE cursus IN (SELECT code FROM cursussen WHERE type = 'BLD')
+  AND begindatum BETWEEN TO_DATE('01-01-2020', 'dd-mm-yyyy') AND TO_DATE('31-12-2020', 'dd-mm-yyyy');
 
 -- S5.6.
 -- Geef van alle cursusuitvoeringen: de cursuscode, de begindatum en het
@@ -84,23 +82,27 @@ LEFT JOIN inschrijvingen AS insch ON uitv.cursus = insch.cursus AND uitv.beginda
 GROUP BY uitv.cursus, uitv.begindatum
 ORDER BY uitv.begindatum;
 
+
 -- S5.7.
--- Geef voorletter(s) en achternaam van alle trainers die ooit tijdens een
--- algemene ('ALG') cursus hun eigen chef als cursist hebben gehad.
-DROP VIEW IF EXISTS s5_7; CREATE OR REPLACE VIEW s5_7 AS                                                     -- [TEST]
-SELECT med.voorl, med.naam from medewerkers AS med
-INNER JOIN uitvoeringen AS uitv ON uitv.docent = med.mnr
-INNER JOIN inschrijvingen AS insch ON uitv.cursus = insch.cursus AND uitv.begindatum = insch.begindatum
-INNER JOIN cursussen AS curs ON curs.code = uitv.cursus
-WHERE med.functie = 'TRAINER' AND curs.type = 'ALG'  AND med.chef = insch.cursist
-group by med.voorl, med.naam;
+-- Geef voorletter(s) en achternaam van alle tran gehad.
+DROP VIEW IF EXISTS s5_7; CREATE OR REPLACiners die ooit tijdens een
+-- algemene ('ALG') cursus hun eigen chef als cursist hebbeE VIEW s5_7 AS                                                     -- [TEST]
+SELECT DISTINCT med.voorl, med.naam
+FROM uitvoeringen AS uitv
+         INNER JOIN medewerkers AS med
+                    ON uitv.docent = med.mnr
+         INNER JOIN inschrijvingen AS insch
+                    ON insch.cursus = uitv.cursus
+                        AND insch.begindatum = uitv.begindatum
+WHERE insch.cursist = med.chef
+  AND insch.cursus
+    IN (SELECT code FROM cursussen WHERE type = 'ALG');
 
 -- S5.8.
 -- Geef de naam van de medewerkers die nog nooit een cursus hebben gegeven.
 DROP VIEW IF EXISTS s5_8; CREATE OR REPLACE VIEW s5_8 AS                                                     -- [TEST]
 SELECT naam FROM medewerkers
-LEFT JOIN uitvoeringen ON uitvoeringen.docent = medewerkers.mnr
-WHERE uitvoeringen.docent IS NULL;
+WHERE mnr NOT IN(SELECT docent FROM uitvoeringen WHERE docent IS NOT NULL);
 
 
 -- -------------------------[ HU TESTRAAMWERK ]--------------------------------
