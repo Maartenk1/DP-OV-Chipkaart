@@ -36,7 +36,8 @@ CREATE INDEX ord_lines_si_id_idx ON order_lines (stock_item_id);
 "  ->  Bitmap Index Scan on ord_lines_si_id_idx  (cost=0.00..11.84 rows=1006 width=0)"
 "        Index Cond: (stock_item_id = 9)"
 
-
+-- Na het creëren van de INDEX is de cost een stuk lager. eerst was de kost (cost=0.00..5051.27 rows=419 width=96)
+-- en nu nog maar (cost=12.09..2300.26 rows=1006 width=96). dit scheelt de helft.
 
 -- S7.2.
 --
@@ -63,6 +64,10 @@ EXPLAIN SELECT * from orders WHERE customer_id = 1028
 "  Recheck Cond: (customer_id = 1028)"
 "  ->  Bitmap Index Scan on b  (cost=0.00..5.09 rows=106 width=0)"
 "        Index Cond: (customer_id = 1028)"
+
+--Bij query A wordt er maar bij 1 rij gezocht. hierdoor is de cost een stuk lager.
+--Bij query B wordt er in meerdere rijen gezocht. Hierdoor is de cost hoger dan bij A.
+--Na het gebruiken van de index op query B is de cost een stuk lager. Dit komt omdat hij bij index alleen maar op column van customer_id zoekt.
 
 -- S7.3.A
 -- Het blijkt dat customers regelmatig klagen over trage bezorging van hun bestelling.
@@ -150,10 +155,9 @@ CREATE INDEX index_quantity ON order_lines (quantity);
 "                    ->  Index Only Scan using index_quantity on order_lines order_lines_1  (cost=0.29..20.22 rows=910 width=4)"
 "                          Index Cond: (quantity > 250)"
 
--- De explain is korter. En inplaats van dat hij Filtert gebruikt hij index Cond.
+-- De query geeft wel een verschillend resultaat, maar ze kosten even veel moeite. het aantal rijen die hij door moet lopen is hetzelfde
 
 -- S7.3.C
 --
 -- Zou je de query ook heel anders kunnen schrijven om hem te versnellen?
--- Nee, er zijn veel verschillende manieren om een query te schrijven,
--- maar sneller kan niet als je alle gegevens wilt houden.
+-- Ja, door geen extra selectstatement meer te gebruiken. hierdoor werkt de index wel.
